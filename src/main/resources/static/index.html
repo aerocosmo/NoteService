@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сервис заметок</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Мои заметки</h1>
+        
+        <div class="note-form">
+            <input type="hidden" id="note-id">
+            <input type="text" id="note-title" placeholder="Заголовок" required>
+            <textarea id="note-content" placeholder="Содержание заметки" required></textarea>
+            <div class="buttons">
+                <button id="save-button">Сохранить</button>
+                <button id="cancel-button" class="hidden">Отмена</button>
+            </div>
+        </div>
+
+        <div class="notes-list" id="notes-list">
+            <!-- Заметки будут добавлены динамически -->
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+

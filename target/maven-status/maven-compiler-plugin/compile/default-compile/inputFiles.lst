@@ -1,0 +1,5 @@
+/home/frost/NS/src/main/java/com/notes/NotesApplication.java
+/home/frost/NS/src/main/java/com/notes/model/Note.java
+/home/frost/NS/src/main/java/com/notes/services/NoteService.java
+/home/frost/NS/src/main/java/com/notes/controller/NoteController.java
+/home/frost/NS/src/main/java/com/notes/repository/NoteRepository.java
