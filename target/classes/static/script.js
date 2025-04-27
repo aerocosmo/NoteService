@@ -109,20 +109,30 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayNotes(notes) {
         notesList.innerHTML = '';
         
-        if (notes.length === 0) {
-            notesList.innerHTML = '<p class="empty-notes">У вас пока нет заметок.</p>';
+        if (!notes || notes.length === 0) {
+            notesList.innerHTML = '<p class="empty-notes">Ничего не найдено.</p>';
             return;
         }
         
-        // Сортировка заметок по дате изменения (сначала новые)
-        notes.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-
+        // Проверяем, что notes - это массив, который можно сортировать
+        if (Array.isArray(notes)) {
+            // Сортировка заметок по дате изменения (сначала новые)
+            notes.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        }
+        
         notes.forEach(note => {
             const noteCard = document.createElement('div');
             noteCard.className = 'note-card';
+            
+            // Генерация HTML для отображения категории, если она есть
+            const categoryHtml = note.category 
+                ? `<span class="note-category">${note.category.name}</span>` 
+                : '';
+                
             noteCard.innerHTML = `
                 <h2>${note.title}</h2>
                 <p>${note.content}</p>
+                ${categoryHtml}
                 <div class="note-actions">
                     <button class="edit-btn" data-id="${note.id}">✏️</button>
                     <button class="delete-btn" data-id="${note.id}">🗑️</button>
@@ -131,20 +141,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     Изменено: ${formatDate(note.updatedAt)}
                 </div>
             `;
-
+            
             // Добавление обработчиков событий для кнопок
             noteCard.querySelector('.edit-btn').addEventListener('click', function() {
                 editNote(note);
             });
-
+            
             noteCard.querySelector('.delete-btn').addEventListener('click', function() {
                 deleteNote(note.id);
             });
-
+            
             notesList.appendChild(noteCard);
         });
     }
-
     // Функция для заполнения формы данными заметки для редактирования
     function editNote(note) {
         noteIdInput.value = note.id;
@@ -174,5 +183,78 @@ document.addEventListener('DOMContentLoaded', function() {
         const date = new Date(dateString);
         return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
     }
+	// sgination
+    let currentPage = 0;
+    const pageSize = 10;
+    
+    function loadNotes(page = 0) {
+        fetch(`/api/notes?page=${page}&size=${pageSize}`)
+            .then(response => response.json())
+            .then(data => {
+                displayNotes(data.content);
+                updatePagination(data);
+            })
+            .catch(error => console.error('Error fetching notes:', error));
+    }
+    
+    function updatePagination(data) {
+        const paginationElement = document.getElementById('pagination');
+        paginationElement.innerHTML = '';
+        
+        if (data.totalPages > 1) {
+            // Previous page button
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Назад';
+            prevButton.disabled = currentPage === 0;
+            prevButton.addEventListener('click', () => {
+                currentPage--;
+                loadNotes(currentPage);
+            });
+            paginationElement.appendChild(prevButton);
+            
+            // Page numbers
+            for (let i = 0; i < data.totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i + 1;
+                pageButton.classList.toggle('active', i === currentPage);
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    loadNotes(currentPage);
+                });
+                paginationElement.appendChild(pageButton);
+            }
+            
+            // Next page button
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Вперед';
+            nextButton.disabled = currentPage === data.totalPages - 1;
+            nextButton.addEventListener('click', () => {
+                currentPage++;
+                loadNotes(currentPage);
+            });
+            paginationElement.appendChild(nextButton);
+        }
+    }
+    // search logic
+    document.getElementById('search-button').addEventListener('click', function() {
+        const query = document.getElementById('search-input').value.trim();
+        if (query) {
+            searchNotes(query);
+        } else {
+            loadNotes();
+        }
+    });
+    
+    function searchNotes(query) {
+        fetch(`/api/notes/search?query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                // Проверяем структуру данных, убеждаемся что это массив
+                const notesArray = Array.isArray(data) ? data : [];
+                displayNotes(notesArray);
+            })
+            .catch(error => console.error('Error searching notes:', error));
+    }
+
 });
 
