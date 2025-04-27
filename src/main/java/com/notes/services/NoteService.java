@@ -1,6 +1,5 @@
 package com.notes.service;
 
-import com.notes.model.Category;
 import com.notes.model.Note;
 import com.notes.repository.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +13,10 @@ import java.util.Optional;
 public class NoteService {
 
     private final NoteRepository noteRepository;
-    private final CategoryService categoryService;
 
     @Autowired
-    public NoteService(NoteRepository noteRepository, CategoryService categoryService) {
+    public NoteService(NoteRepository noteRepository) {
         this.noteRepository = noteRepository;
-        this.categoryService = categoryService;
     }
 
     public List<Note> getAllNotes() {
@@ -52,39 +49,10 @@ public class NoteService {
         return false;
     }
 
-    // Метод для поиска заметок по категории
-    public List<Note> getNotesByCategory(Long categoryId) {
-        return noteRepository.findByCategoryId(categoryId);
-    }
-
-    // Добавляем метод для создания заметки с категорией
-    public Note createNoteWithCategory(Note note, String categoryName) {
-        if (categoryName != null && !categoryName.trim().isEmpty()) {
-            Category category = categoryService.findOrCreateCategory(categoryName);
-            note.setCategory(category);
-        }
-        return noteRepository.save(note);
-    }
     public List<Note> searchNotes(String query) {
         // Логирование для отладки
-        System.out.println("Service searching for: " + query);
+        //System.out.println("Service searching for: " + query);
         return noteRepository.findByTitleContainingOrContentContainingIgnoreCase(query, query);
-    }
-    // метод для обновления заметки с категорией
-    public Optional<Note> updateNoteWithCategory(Long id, Note updatedNote, String categoryName) {
-        return noteRepository.findById(id)
-                .map(existingNote -> {
-                    existingNote.setTitle(updatedNote.getTitle());
-                    existingNote.setContent(updatedNote.getContent());
-
-                    if (categoryName != null && !categoryName.trim().isEmpty()) {
-                        Category category = categoryService.findOrCreateCategory(categoryName);
-                        existingNote.setCategory(category);
-                    }
-
-                    existingNote.setUpdatedAt(LocalDateTime.now());
-                    return noteRepository.save(existingNote);
-                });
     }
 }
 

@@ -1,9 +1,5 @@
 com/notes/NotesApplication.class
-com/notes/model/Category.class
-com/notes/repository/CategoryRepository.class
 com/notes/controller/NoteController.class
 com/notes/service/NoteService.class
 com/notes/repository/NoteRepository.class
-com/notes/controller/CategoryController.class
 com/notes/model/Note.class
-com/notes/service/CategoryService.class

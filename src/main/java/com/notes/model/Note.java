@@ -24,12 +24,6 @@ public class Note {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private boolean archived = false;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
-    private Category category;
-
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

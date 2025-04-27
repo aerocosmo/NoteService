@@ -45,17 +45,6 @@ public class NoteController {
                 .orElse(ResponseEntity.notFound().build());
     }
     // added search
-    @GetMapping("/by-category/{categoryId}")
-    public ResponseEntity<List<Note>> getNotesByCategory(@PathVariable Long categoryId) {
-        return ResponseEntity.ok(noteService.getNotesByCategory(categoryId));
-    }
-    @PostMapping("/with-category")
-    public ResponseEntity<Note> createNoteWithCategory(
-            @RequestBody Note note,
-            @RequestParam(required = false) String categoryName) {
-        Note createdNote = noteService.createNoteWithCategory(note, categoryName);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdNote);
-    }
    @GetMapping("/search")
    public ResponseEntity<List<Note>> searchNotes(@RequestParam String query) {
        List<Note> notes = noteService.searchNotes(query);
