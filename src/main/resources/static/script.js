@@ -101,31 +101,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Функция для отображения заметок на странице
     function displayNotes(notes) {
-        const notesList = document.getElementById('notes-list');
-        notesList.innerHTML = ''; // Очищаем текущий список
+        notesList.innerHTML = '';
       
         if (notes.length === 0) {
-          notesList.innerHTML = '<p>Ничего не найдено.</p>';
+          notesList.innerHTML = '<p class="empty">Заметок с этим тегом не найдено</p>';
           return;
         }
       
         notes.forEach(note => {
-          const noteCard = document.createElement('div');
-          noteCard.className = 'notecard';
-      
-          const tags = note.tags.map(tag => `<span class="tag">${tag}</span>`).join(', ');
-      
-          noteCard.innerHTML = `
+          const noteElement = document.createElement('div');
+          noteElement.className = 'note-card';
+          noteElement.innerHTML = `
             <h2>${note.title}</h2>
-            <p>${note.content}</p>
-            <p><strong>Тэги:</strong> ${tags}</p>
+            <div class="note-content">${note.content}</div>
+            <div class="note-tags">${note.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
             <div class="note-actions">
               <button class="editbtn" data-id="${note.id}">✏️</button>
               <button class="deletebtn" data-id="${note.id}">🗑️</button>
             </div>
           `;
-      
-          notesList.appendChild(noteCard);
+          notesList.appendChild(noteElement);
         });
     }
       
@@ -268,11 +263,38 @@ document.addEventListener('DOMContentLoaded', function() {
       
     
     function filterByTag(tag) {
+        // 1. Скрываем выпадающий список
+        tagsDropdown.classList.add('hidden');
+        
+        // 2. Показываем индикатор загрузки
+        const loader = document.createElement('div');
+        loader.className = 'loader';
+        notesList.innerHTML = '';
+        notesList.appendChild(loader);
+      
+        // 3. Отправляем запрос на сервер
         fetch(`/api/notes/tags?tag=${encodeURIComponent(tag)}`)
-            .then(response => response.json())
-            .then(notes => displayNotes(notes)) // Отображает только отфильтрованные заметки
-            .catch(error => console.error('Ошибка фильтрации заметок:', error));
-    }
+          .then(response => {
+            if (!response.ok) throw new Error('Ошибка сервера: ' + response.status);
+            return response.json();
+          })
+          .then(notes => {
+            // 4. Обновляем список заметок
+            displayNotes(notes);
+            
+            // 5. Добавляем визуальную подсветку выбранного тега
+            const activeTags = document.querySelectorAll('.active-tag');
+            activeTags.forEach(t => t.classList.remove('active-tag'));
+            
+            const selectedTagElements = [...document.querySelectorAll('#tags-dropdown li')]
+              .filter(li => li.textContent === tag);
+            selectedTagElements.forEach(el => el.classList.add('active-tag'));
+          })
+          .catch(error => {
+            console.error('Ошибка:', error);
+            notesList.innerHTML = `<div class="error">Ошибка загрузки: ${error.message}</div>`;
+          });
+      }
 
     // Загрузка всех доступных тэгов
     tagsButton.addEventListener('click', async () => {
