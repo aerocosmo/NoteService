@@ -313,5 +313,5 @@ document.addEventListener('DOMContentLoaded', function() {
       bodyElement.setAttribute('data-theme', systemTheme);
     }
 
-);
+});
 
