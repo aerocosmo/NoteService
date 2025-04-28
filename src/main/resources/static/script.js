@@ -275,32 +275,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Загрузка всех доступных тэгов
-    // tagsButton.addEventListener('click', function () {
-    //     fetch('/api/notes/all-tags') // Осуществляем GET запрос
-    //       .then(response => {
-    //         if (!response.ok) {
-    //           throw new Error('Ошибка запроса');
-    //         }
-    //         return response.json(); // Преобразуем ответ в JSON
-    //       })
-    //       .then(tags => {
-    //         if (tags.length > 0) {
-    //           // Обновляем содержимое dropdown
-    //           tagsDropdown.innerHTML = tags
-    //             .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`) // Создаём список тегов
-    //             .join('');
-    //           tagsDropdown.classList.remove('hidden');
-    //         } else {
-    //           tagsDropdown.innerHTML = '<li>Нет доступных тэгов</li>';
-    //           tagsDropdown.classList.remove('hidden');
-    //         }
-    //       })
-    //       .catch(error => console.error('Ошибка загрузки тэгов:', error)); // Логируем ошибку
-    //   });
-    tagsButton.addEventListener('click', () => {
-        loadTags(); // Загружаем тэги с сервера
-        tagsDropdown.classList.toggle('visible'); // Переключаем класс видимости
+    tagsButton.addEventListener('click', async () => {
+        try {
+          // Загружаем тэги только при первом клике
+          if (tagsDropdown.children.length === 0) {
+            const response = await fetch('/api/notes/all-tags');
+            const tags = await response.json();
+            
+            tagsDropdown.innerHTML = tags
+              .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`)
+              .join('');
+          }
+          
+          // Переключаем видимость
+          tagsDropdown.classList.toggle('visible');
+          tagsDropdown.classList.toggle('hidden');
+          
+        } catch (error) {
+          console.error('Ошибка:', error);
+          tagsDropdown.innerHTML = '<li>Ошибка загрузки</li>';
+        }
     });
+    // tagsButton.addEventListener('click', () => {
+    //     loadTags(); // Загружаем тэги с сервера
+    //     tagsDropdown.classList.toggle('visible'); // Переключаем класс видимости
+    // });
       
 
     // dark theme
