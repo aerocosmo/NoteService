@@ -155,14 +155,7 @@
   }
 
   /* Выпадающий список тэгов */
-  .search-wrapper {
-    position: relative; /* Добавьте это! */
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-    
-  #tags-dropdown li.active-tag {
+ #tags-dropdown li.active-tag {
     background-color: var(--primary-color);
     color: white;
   }
