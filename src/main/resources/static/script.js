@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Функция для отображения заметок на странице
     function displayNotes(notes) {
         const notesList = document.getElementById('notes-list');
-        notesList.innerHTML = ''; // Очищаем список перед добавлением новых заметок
+        notesList.innerHTML = ''; // Очищаем текущий список
       
         if (notes.length === 0) {
           notesList.innerHTML = '<p>Ничего не найдено.</p>';
@@ -112,19 +112,23 @@ document.addEventListener('DOMContentLoaded', function() {
         notes.forEach(note => {
           const noteCard = document.createElement('div');
           noteCard.className = 'notecard';
-          const tagsHtml = note.tags.map(tag => `<span class="tag">${tag}</span>`).join(', '); // Отображение тэгов
+      
+          const tags = note.tags.map(tag => `<span class="tag">${tag}</span>`).join(', ');
+      
           noteCard.innerHTML = `
             <h2>${note.title}</h2>
             <p>${note.content}</p>
-            <p><small>Тэги: ${tagsHtml}</small></p>
-            <div class="noteactions">
+            <p><strong>Тэги:</strong> ${tags}</p>
+            <div class="note-actions">
               <button class="editbtn" data-id="${note.id}">✏️</button>
               <button class="deletebtn" data-id="${note.id}">🗑️</button>
             </div>
           `;
+      
           notesList.appendChild(noteCard);
         });
     }
+      
     // Функция для заполнения формы данными заметки для редактирования
     function editNote(note) {
         noteIdInput.value = note.id;
@@ -249,8 +253,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(tags => {
           tagsDropdown.innerHTML = tags
-            .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`)
-            .join('');
+          .map(tag => <li onclick="filterByTag('${tag}')">${tag}</li>)
+        //   .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`)
+          .join('');
         });
     }
     // function filterByTag(tag) {
