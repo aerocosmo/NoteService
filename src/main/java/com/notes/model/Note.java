@@ -25,6 +25,7 @@ public class Note {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    // tags
     @ElementCollection
     private List<String> tags = new ArrayList<>();
 

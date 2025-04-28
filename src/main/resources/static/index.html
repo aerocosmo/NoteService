@@ -21,6 +21,18 @@
                 <button id="cancel-button" class="hidden">Отмена</button>
             </div>
         </div>
+        <!-- Поле для добавления тэгов -->
+        <div class="form-group">
+            <label for="note-tags">Тэги (через запятую):</label>
+            <input type="text" id="note-tags" placeholder="Пример: Работа, Личное">
+        </div>
+
+          <!-- Кнопка для фильтрации по тэгам -->
+        <div class="tags-wrapper">
+            <button id="tags-button">Тэги</button>
+            <ul id="tags-dropdown" class="dropdown hidden"></ul>
+        </div>
+  
 	<!-- search  -->
 	<!-- <div class="search-container">
 	    <input type="text" id="search-input" placeholder="Поиск заметок...">
@@ -37,7 +49,6 @@
             <ul id="tags-dropdown" class="dropdown hidden"></ul>
         </div>
     
-
         <div class="notes-list" id="notes-list">
             <!-- Заметки будут добавлены динамически -->
         </div>

@@ -43,46 +43,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Функция для создания новой заметки
     function createNote(title, content) {
+        const tags = document.getElementById('note-tags').value
+          .split(',')
+          .map(tag => tag.trim()); // Разделяем тэги запятыми
+      
         fetch('/api/notes', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ title, content })
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, content, tags })
         })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Не удалось создать заметку');
-        })
-        .then(() => {
+          .then(response => response.json())
+          .then(() => {
             resetForm();
             fetchNotes();
-        })
-        .catch(error => console.error('Error creating note:', error));
+          })
+          .catch(error => console.error('Ошибка создания заметки:', error));
     }
 
     // Функция для обновления заметки
     function updateNote(id, title, content) {
+        const tags = document.getElementById('note-tags').value
+          .split(',')
+          .map(tag => tag.trim());
+      
         fetch(`/api/notes/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ title, content })
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, content, tags })
         })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Не удалось обновить заметку');
-        })
-        .then(() => {
+          .then(response => response.json())
+          .then(() => {
             resetForm();
             fetchNotes();
-        })
-        .catch(error => console.error('Error updating note:', error));
+          })
+          .catch(error => console.error('Ошибка обновления заметки:', error));
     }
 
     // Функция для удаления заметки
@@ -282,12 +276,33 @@ document.addEventListener('DOMContentLoaded', function() {
             .join('');
         });
     }
+    // function filterByTag(tag) {
+    //   fetch(`/api/notes/tags?tag=${encodeURIComponent(tag)}`)
+    //     .then(response => response.json())
+    //     .then(notes => displayNotes(notes));
+    // }
+    // tagsButton.addEventListener('click', loadTags);
+
     function filterByTag(tag) {
-      fetch(`/api/notes/tags?tag=${encodeURIComponent(tag)}`)
-        .then(response => response.json())
-        .then(notes => displayNotes(notes));
+        fetch(`/api/notes/tags?tag=${encodeURIComponent(tag)}`)
+            .then(response => response.json())
+            .then(notes => displayNotes(notes)) // Отображает только отфильтрованные заметки
+            .catch(error => console.error('Ошибка фильтрации заметок:', error));
     }
-    tagsButton.addEventListener('click', loadTags);
+
+    // Загрузка всех доступных тэгов
+    tagsButton.addEventListener('click', function () {
+    fetch('/api/notes/all-tags')
+      .then(response => response.json())
+      .then(tags => {
+        // Отображение выпадающего списка с тэгами
+        tagsDropdown.innerHTML = tags
+          .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`)
+          .join('');
+        tagsDropdown.classList.toggle('hidden'); // Показываем/скрываем список
+      })
+      .catch(error => console.error('Ошибка загрузки тэгов:', error));
+    });
 
     // dark theme
     // Сохраняем элементы

@@ -52,6 +52,15 @@ public class NoteService {
     public List<Note> getNotesByTag(String tag) {
         return noteRepository.findByTagsContainingIgnoreCase(tag);
     }
+    // getting all tags
+    public List<String> getAllTags() {
+    List<Note> allNotes = noteRepository.findAll();
+    return allNotes.stream()
+            .flatMap(note -> note.getTags().stream())
+            .distinct()
+            .collect(Collectors.toList());
+    }
+
     // search
     public List<Note> searchNotes(String query) {
         // Логирование для отладки

@@ -55,6 +55,12 @@ public class NoteController {
     public ResponseEntity<List<Note>> getNotesByTag(@RequestParam String tag) {
         return ResponseEntity.ok(noteService.getNotesByTag(tag));
     }
+    // getting all tags
+    @GetMapping("/all-tags")
+    public ResponseEntity<List<String>> getAllTags() {
+        List<String> allTags = noteService.getAllTags();
+        return ResponseEntity.ok(allTags);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNote(@PathVariable Long id) {

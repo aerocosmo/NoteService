@@ -11,6 +11,7 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
 
     // tagSearch
     List<Note> findByTagsContainingIgnoreCase(String tag);
+    List<Note> findByTagsContaining(String tag);
     // Метод для поиска заметок по id категории
     List<Note> findByTitleContainingOrContentContainingIgnoreCase(String title, String content);
 }
