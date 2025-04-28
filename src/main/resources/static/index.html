@@ -9,9 +9,12 @@
 <body>
     <div class="container">
         <h1>Мои заметки</h1>
-        <header class="header">
-            <button id="theme-toggle">🌓 Тёмная тема</button>
-        </header>
+        <div class="header-controls">
+            <button id="theme-toggle" class="icon-btn" aria-label="Переключить тему">
+              <span class="theme-icon">🌓</span>
+              <span class="theme-text">Тёмная тема</span>
+            </button>
+        </div>
         <div class="note-form">
             <input type="hidden" id="note-id">
             <input type="text" id="note-title" placeholder="Заголовок" required>

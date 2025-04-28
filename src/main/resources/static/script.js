@@ -256,31 +256,35 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error searching notes:', error));
     }
     // dark theme
-    // Сохраняем элементы
+document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('theme-toggle');
-    const bodyElement = document.body;
-    
-    // Проверка сохранённой темы
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    bodyElement.setAttribute('data-theme', savedTheme);
-    
-    // Обработчик клика
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = bodyElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    
-      bodyElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-    
-      // Обновляем текст кнопки
-      themeToggle.textContent = newTheme === 'dark' ? '☀️ Светлая тема' : '🌓 Тёмная тема';
-    });
-    
-    // Автоопределение системной темы
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    if (!localStorage.getItem('theme')) {
-      bodyElement.setAttribute('data-theme', systemTheme);
+    if (!themeToggle) {
+      console.error('Кнопка переключения темы не найдена!');
+      return;
     }
+  
+    const applyTheme = (theme) => {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      themeToggle.querySelector('.theme-icon').textContent = theme === 'dark' ? '☀️' : '🌓';
+      themeToggle.querySelector('.theme-text').textContent = theme === 'dark' 
+        ? 'Светлая тема' 
+        : 'Тёмная тема';
+    };
+  
+    const currentTheme = localStorage.getItem('theme') || 
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    
+    applyTheme(currentTheme);
+  
+    themeToggle.addEventListener('click', () => {
+      const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' 
+        ? 'light' 
+        : 'dark';
+      applyTheme(newTheme);
+    });
+  });
+  
 
 });
 

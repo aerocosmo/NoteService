@@ -1,3 +1,32 @@
+#theme-toggle {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative;
+    z-index: 1000;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--card-bg) !important;
+    border: 2px solid var(--accent-color) !important;
+  }
+  
+  .theme-icon {
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+  }
+  
+  .theme-text {
+    font-size: 0.9em;
+  }
+  
+  /* Принудительное отображение */
+  body header .header-controls {
+    display: block !important;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
 /* ========== БАЗОВЫЕ СТИЛИ ========== /
 :root {
 / Цветовая схема по умолчанию (светлая тема) */
