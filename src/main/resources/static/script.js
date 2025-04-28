@@ -255,6 +255,40 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => console.error('Error searching notes:', error));
     }
+    // tag search
+    const noteTagsInput = document.getElementById('note-tags'); // Новое поле ввода для тэгов
+    function createNote(title, content) {
+      const tags = noteTagsInput.value.split(',').map(tag => tag.trim()); // Разделение тэгов по запятой
+
+      fetch('/api/notes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, content, tags }),
+      })
+      .then(/* остальной код */);
+    }
+    //tag search  button
+    const tagsButton = document.getElementById('tags-button');
+    const tagsDropdown = document.getElementById('tags-dropdown');
+
+    function loadTags() {
+      fetch('/api/notes/tags')
+        .then(response => response.json())
+        .then(tags => {
+          tagsDropdown.innerHTML = tags
+            .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`)
+            .join('');
+        });
+    }
+    function filterByTag(tag) {
+      fetch(`/api/notes/tags?tag=${encodeURIComponent(tag)}`)
+        .then(response => response.json())
+        .then(notes => displayNotes(notes));
+    }
+    tagsButton.addEventListener('click', loadTags);
+
     // dark theme
     // Сохраняем элементы
     const themeToggle = document.getElementById('theme-toggle');

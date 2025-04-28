@@ -22,10 +22,21 @@
             </div>
         </div>
 	<!-- search  -->
-	<div class="search-container">
+	<!-- <div class="search-container">
 	    <input type="text" id="search-input" placeholder="Поиск заметок...">
 	    <button id="search-button">Поиск</button>
-	</div>
+	</div> -->
+        <!-- Поиск -->
+        <div class="search-wrapper">
+            <input type="text" id="search-input" placeholder="Поиск">
+            <button id="search-button">Поиск</button>
+    
+    
+            <!-- Кнопка и выпадающий список для фильтрации по тэгам -->
+            <button id="tags-button">Тэги</button>
+            <ul id="tags-dropdown" class="dropdown hidden"></ul>
+        </div>
+    
 
         <div class="notes-list" id="notes-list">
             <!-- Заметки будут добавлены динамически -->

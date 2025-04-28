@@ -9,6 +9,8 @@ import java.util.List; // Добавьте этот импорт
 public interface NoteRepository extends JpaRepository<Note, Long> {
     // Базовые CRUD операции уже включены в JpaRepository
 
+    // tagSearch
+    List<Note> findByTagsContainingIgnoreCase(String tag);
     // Метод для поиска заметок по id категории
     List<Note> findByTitleContainingOrContentContainingIgnoreCase(String title, String content);
 }

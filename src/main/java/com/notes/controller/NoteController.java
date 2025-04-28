@@ -50,16 +50,12 @@ public class NoteController {
        List<Note> notes = noteService.searchNotes(query);
        return ResponseEntity.ok(notes);
    }
+    //tagSearch
+    @GetMapping("/tags")
+    public ResponseEntity<List<Note>> getNotesByTag(@RequestParam String tag) {
+        return ResponseEntity.ok(noteService.getNotesByTag(tag));
+    }
 
-    //@PutMapping("/{id}/with-category")
-    //public ResponseEntity<Note> updateNoteWithCategory(
-    //        @PathVariable Long id,
-    //        @RequestBody Note note,
-    //        @RequestParam(required = false) String categoryName) {
-    //    return noteService.updateNoteWithCategory(id, note, categoryName)
-    //            .map(ResponseEntity::ok)
-    //            .orElse(ResponseEntity.notFound().build());
-    //}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNote(@PathVariable Long id) {
         if (noteService.deleteNote(id)) {

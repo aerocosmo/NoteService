@@ -48,7 +48,11 @@ public class NoteService {
         }
         return false;
     }
-
+    // tagSearch
+    public List<Note> getNotesByTag(String tag) {
+        return noteRepository.findByTagsContainingIgnoreCase(tag);
+    }
+    // search
     public List<Note> searchNotes(String query) {
         // Логирование для отладки
         //System.out.println("Service searching for: " + query);
