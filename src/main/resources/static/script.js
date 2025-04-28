@@ -6,9 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const noteContentInput = document.getElementById('note-content');
     const saveButton = document.getElementById('save-button');
     const cancelButton = document.getElementById('cancel-button');
-    const tagsButton = document.getElementById('tags-button');
-    const tagsDropdown = document.getElementById('tags-dropdown');
-    
+
     // Загрузка всех заметок при загрузке страницы
     fetchNotes();
 
@@ -247,16 +245,28 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(/* остальной код */);
     }
     //tag search  button
-    function loadTags() {
-      fetch('/api/notes/tags')
-        .then(response => response.json())
-        .then(tags => {
-          tagsDropdown.innerHTML = tags
-          .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`)
-          .join('');
-        });
-    }
+    const tagsButton = document.getElementById('tags-button');
+    const tagsDropdown = document.getElementById('tags-dropdown');
 
+    function loadTags() {
+        fetch('/api/notes/all-tags') // Выполняем запрос на получение всех тэгов
+          .then(response => response.json())
+          .then(tags => {
+            if (tags.length > 0) {
+              // Наполняем список тэгами
+              tagsDropdown.innerHTML = tags
+                .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`)
+                .join('');
+              tagsDropdown.classList.add('visible'); // Показываем список
+            } else {
+              tagsDropdown.innerHTML = `<li>Нет доступных тэгов</li>`;
+              tagsDropdown.classList.add('visible'); // Показываем список даже при отсутствии тэгов
+            }
+          })
+          .catch(error => console.error('Ошибка загрузки тэгов', error));
+    }
+      
+    
     function filterByTag(tag) {
         fetch(`/api/notes/tags?tag=${encodeURIComponent(tag)}`)
             .then(response => response.json())
@@ -265,28 +275,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Загрузка всех доступных тэгов
-    tagsButton.addEventListener('click', function () {
-        fetch('/api/notes/all-tags') // Осуществляем GET запрос
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Ошибка запроса');
-            }
-            return response.json(); // Преобразуем ответ в JSON
-          })
-          .then(tags => {
-            if (tags.length > 0) {
-              // Обновляем содержимое dropdown
-              tagsDropdown.innerHTML = tags
-                .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`) // Создаём список тегов
-                .join('');
-              tagsDropdown.classList.remove('hidden');
-            } else {
-              tagsDropdown.innerHTML = '<li>Нет доступных тэгов</li>';
-              tagsDropdown.classList.remove('hidden');
-            }
-          })
-          .catch(error => console.error('Ошибка загрузки тэгов:', error)); // Логируем ошибку
-      });
+    // tagsButton.addEventListener('click', function () {
+    //     fetch('/api/notes/all-tags') // Осуществляем GET запрос
+    //       .then(response => {
+    //         if (!response.ok) {
+    //           throw new Error('Ошибка запроса');
+    //         }
+    //         return response.json(); // Преобразуем ответ в JSON
+    //       })
+    //       .then(tags => {
+    //         if (tags.length > 0) {
+    //           // Обновляем содержимое dropdown
+    //           tagsDropdown.innerHTML = tags
+    //             .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`) // Создаём список тегов
+    //             .join('');
+    //           tagsDropdown.classList.remove('hidden');
+    //         } else {
+    //           tagsDropdown.innerHTML = '<li>Нет доступных тэгов</li>';
+    //           tagsDropdown.classList.remove('hidden');
+    //         }
+    //       })
+    //       .catch(error => console.error('Ошибка загрузки тэгов:', error)); // Логируем ошибку
+    //   });
+    tagsButton.addEventListener('click', () => {
+        loadTags(); // Загружаем тэги с сервера
+        tagsDropdown.classList.toggle('visible'); // Переключаем класс видимости
+    });
+      
 
     // dark theme
     // Сохраняем элементы
