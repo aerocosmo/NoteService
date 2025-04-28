@@ -1,161 +1,146 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+/* ========== БАЗОВЫЕ СТИЛИ ========== /
+:root {
+/ Цветовая схема по умолчанию (светлая тема) */
+--bg-color: #f8f9fa;
+--text-color: #2d3748;
+--card-bg: #ffffff;
+--border-color: #e2e8f0;
+--heading-color: #2c3e50;
+--accent-color: #4299e1;
+--hover-color: #ebf8ff;
+--shadow-color: rgba(0, 0, 0, 0.1);
 }
 
+[data-theme="dark"] {
+/* Тёмная тема */
+--bg-color: #1a202c;
+--text-color: #e2e8f0;
+--card-bg: #2d3748;
+--border-color: #4a5568;
+--heading-color: #ffffff;
+--accent-color: #63b3ed;
+--hover-color: rgba(99, 179, 237, 0.1);
+--shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+/* ========== ОСНОВНАЯ РАЗМЕТКА ========== */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f5f5f5;
+background-color: var(--bg-color);
+color: var(--text-color);
+transition: background-color 0.3s ease, color 0.3s ease;
+line-height: 1.6;
+min-height: 100vh;
 }
 
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+max-width: 1200px;
+margin: 0 auto;
+padding: 2rem;
 }
 
-h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #2c3e50;
+/* ========== ЗАГОЛОВОК "МОИ ЗАМЕТКИ" ========== */
+.notes-header {
+padding: 2rem 0;
+border-bottom: 1px solid var(--border-color);
+margin-bottom: 2rem;
 }
 
-.note-form {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
+.notes-header h2 {
+color: var(--heading-color) !important;
+font-size: 2.5rem;
+margin: 0;
+position: relative;
+display: inline-block;
+padding-bottom: 0.5rem;
 }
 
-input[type="text"], textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
+.notes-header h2::after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 0;
+width: 100%;
+height: 3px;
+background: var(--accent-color);
+border-radius: 2px;
+}
+
+/* ========== КАРТОЧКИ ЗАМЕТОК ========== */
+.note-card {
+background: var(--card-bg);
+border: 1px solid var(--border-color);
+border-radius: 0.5rem;
+padding: 1.5rem;
+margin-bottom: 1.5rem;
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.note-card:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+/* ========== ФОРМА ВВОДА ========== */
+.input-group {
+margin-bottom: 2rem;
+background: var(--card-bg);
+border: 1px solid var(--border-color);
+border-radius: 0.5rem;
+padding: 1.5rem;
+}
+
+input[type="text"],
+textarea {
+width: 100%;
+padding: 0.875rem;
+border: 2px solid var(--border-color);
+border-radius: 0.375rem;
+background: var(--card-bg);
+color: var(--text-color);
+font-size: 1rem;
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 textarea {
-    min-height: 150px;
-    resize: vertical;
+min-height: 150px;
+resize: vertical;
 }
 
+input:focus,
+textarea:focus {
+border-color: var(--accent-color);
+box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
+outline: none;
+}
+
+/* ========== КНОПКИ ========== */
 button {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
+background: var(--accent-color);
+color: white;
+border: none;
+padding: 0.75rem 1.5rem;
+border-radius: 0.375rem;
+cursor: pointer;
+transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #2980b9;
+background: #4299e1;
 }
 
-.buttons {
-    display: flex;
-    gap: 10px;
+#theme-toggle {
+background: transparent;
+color: var(--text-color);
+border: 2px solid var(--border-color);
+padding: 0.5rem 1rem;
+display: flex;
+align-items: center;
+gap: 0.5rem;
 }
 
-#cancel-button {
-    background-color: #e74c3c;
+/* ========== АДАПТИВНОСТЬ ========== */
+@media (max-width: 768px) {
+.container {
+padding: 1rem;
 }
-
-#cancel-button:hover {
-    background-color: #c0392b;
-}
-
-.note-card {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
-    position: relative;
-}
-
-.note-card h2 {
-    margin-bottom: 10px;
-    color: #2c3e50;
-}
-
-.note-card p {
-    color: #555;
-    margin-bottom: 15px;
-}
-
-.note-card .note-actions {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    display: flex;
-    gap: 8px;
-}
-
-.note-card .edit-btn, .note-card .delete-btn {
-    background: none;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    padding: 5px;
-}
-
-.note-card .edit-btn {
-    color: #3498db;
-}
-
-.note-card .delete-btn {
-    color: #e74c3c;
-}
-
-.note-card .note-date {
-    font-size: 12px;
-    color: #999;
-    text-align: right;
-}
-
-.hidden {
-    display: none;
-}
-
-:root {
-    --bg-color: #ffffff;
-    --text-color: #333333;
-    --card-bg: #ffffff;
-    --border-color: #e0e0e0;
-  }
-  
-  [data-theme="dark"] {
-    --bg-color: #1a1a1a;
-    --text-color: #f5f5f5;
-    --card-bg: #2d2d2d;
-    --border-color: #404040;
-  }
-  
-  body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    transition: all 0.3s ease;
-  }
-  
-  .note-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-  }
-  
-  input[type="text"], 
-  textarea,
-  button {
-    background-color: var(--card-bg);
-    color: var(--text-color);
-    border-color: var(--border-color);
-  }
-  
