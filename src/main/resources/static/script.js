@@ -44,9 +44,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Функция для создания новой заметки
     function createNote(title, content) {
         const tags = document.getElementById('note-tags').value
-          .split(',')
-          .map(tag => tag.trim()); // Разделяем тэги запятыми
-      
+            .split(',')
+            .map(tag => tag.trim()); // Разделяем тэги запятыми
+            .filter(tag => tag.length > 0); // Удаляем пустые
         fetch('/api/notes', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
