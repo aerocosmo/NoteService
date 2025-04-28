@@ -101,51 +101,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Функция для отображения заметок на странице
     function displayNotes(notes) {
-        notesList.innerHTML = '';
-        
-        if (!notes || notes.length === 0) {
-            notesList.innerHTML = '<p class="empty-notes">Ничего не найдено.</p>';
-            return;
+        const notesList = document.getElementById('notes-list');
+        notesList.innerHTML = ''; // Очищаем список перед добавлением новых заметок
+      
+        if (notes.length === 0) {
+          notesList.innerHTML = '<p>Ничего не найдено.</p>';
+          return;
         }
-        
-        // Проверяем, что notes - это массив, который можно сортировать
-        if (Array.isArray(notes)) {
-            // Сортировка заметок по дате изменения (сначала новые)
-            notes.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-        }
-        
+      
         notes.forEach(note => {
-            const noteCard = document.createElement('div');
-            noteCard.className = 'note-card';
-            
-            // Генерация HTML для отображения категории, если она есть
-            const categoryHtml = note.category 
-                ? `<span class="note-category">${note.category.name}</span>` 
-                : '';
-                
-            noteCard.innerHTML = `
-                <h2>${note.title}</h2>
-                <p>${note.content}</p>
-                ${categoryHtml}
-                <div class="note-actions">
-                    <button class="edit-btn" data-id="${note.id}">✏️</button>
-                    <button class="delete-btn" data-id="${note.id}">🗑️</button>
-                </div>
-                <div class="note-date">
-                    Изменено: ${formatDate(note.updatedAt)}
-                </div>
-            `;
-            
-            // Добавление обработчиков событий для кнопок
-            noteCard.querySelector('.edit-btn').addEventListener('click', function() {
-                editNote(note);
-            });
-            
-            noteCard.querySelector('.delete-btn').addEventListener('click', function() {
-                deleteNote(note.id);
-            });
-            
-            notesList.appendChild(noteCard);
+          const noteCard = document.createElement('div');
+          noteCard.className = 'notecard';
+          const tagsHtml = note.tags.map(tag => `<span class="tag">${tag}</span>`).join(', '); // Отображение тэгов
+          noteCard.innerHTML = `
+            <h2>${note.title}</h2>
+            <p>${note.content}</p>
+            <p><small>Тэги: ${tagsHtml}</small></p>
+            <div class="noteactions">
+              <button class="editbtn" data-id="${note.id}">✏️</button>
+              <button class="deletebtn" data-id="${note.id}">🗑️</button>
+            </div>
+          `;
+          notesList.appendChild(noteCard);
         });
     }
     // Функция для заполнения формы данными заметки для редактирования
@@ -291,17 +268,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Загрузка всех доступных тэгов
-    tagsButton.addEventListener('click', function () {
-    fetch('/api/notes/all-tags')
-      .then(response => response.json())
-      .then(tags => {
-        // Отображение выпадающего списка с тэгами
-        tagsDropdown.innerHTML = tags
-          .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`)
-          .join('');
-        tagsDropdown.classList.toggle('hidden'); // Показываем/скрываем список
-      })
-      .catch(error => console.error('Ошибка загрузки тэгов:', error));
+    });tagsButton.addEventListener('click', function () {
+      fetch('/api/notes/all-tags') // Запрос на сервер для получения списка всех тэгов
+        .then(response => response.json())
+        .then(tags => {
+          if (tags.length > 0) {
+            // Наполняем dropdown список тэгами
+            tagsDropdown.innerHTML = tags
+              .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`)
+              .join('');
+            tagsDropdown.classList.remove('hidden'); // Показываем, если есть тэги
+          } else {
+            tagsDropdown.innerHTML = '<li>Нет доступных тэгов</li>';
+            tagsDropdown.classList.remove('hidden');
+          }
+        })
+        .catch(error => console.error('Ошибка при загрузке тэгов:', error));
     });
 
     // dark theme
