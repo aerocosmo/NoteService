@@ -57,9 +57,9 @@ public class NoteService {
     public List<String> getAllTags() {
     List<Note> allNotes = noteRepository.findAll();
     return allNotes.stream()
-            .flatMap(note -> note.getTags().stream())
-            .distinct()
-            .collect(Collectors.toList());
+        .flatMap(note -> note.getTags().stream()) // Разворачиваем тэги из заметок
+        .distinct() // Убираем дубликаты
+        .collect(Collectors.toList()); // Преобразуем в список
     }
 
     // search

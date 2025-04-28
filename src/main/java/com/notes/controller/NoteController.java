@@ -62,6 +62,7 @@ public class NoteController {
         return ResponseEntity.ok(allTags);
     }
 
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNote(@PathVariable Long id) {
         if (noteService.deleteNote(id)) {
