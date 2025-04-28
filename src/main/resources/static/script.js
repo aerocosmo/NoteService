@@ -253,8 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(tags => {
           tagsDropdown.innerHTML = tags
-          .map(tag => <li onclick="filterByTag('${tag}')">${tag}</li>)
-        //   .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`)
+          .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`)
           .join('');
         });
     }
@@ -274,22 +273,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Загрузка всех доступных тэгов
     tagsButton.addEventListener('click', function () {
-      fetch('/api/notes/all-tags') // Запрос на сервер для получения списка всех тэгов
-        .then(response => response.json())
-        .then(tags => {
-          if (tags.length > 0) {
-            // Наполняем dropdown список тэгами
-            tagsDropdown.innerHTML = tags
-              .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`)
-              .join('');
-            tagsDropdown.classList.remove('hidden'); // Показываем, если есть тэги
-          } else {
-            tagsDropdown.innerHTML = '<li>Нет доступных тэгов</li>';
-            tagsDropdown.classList.remove('hidden');
-          }
-        })
-        .catch(error => console.error('Ошибка при загрузке тэгов:', error));
-    });
+        fetch('/api/notes/all-tags') // Осуществляем GET запрос
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Ошибка запроса');
+            }
+            return response.json(); // Преобразуем ответ в JSON
+          })
+          .then(tags => {
+            if (tags.length > 0) {
+              // Обновляем содержимое dropdown
+              tagsDropdown.innerHTML = tags
+                .map(tag => `<li onclick="filterByTag('${tag}')">${tag}</li>`) // Создаём список тегов
+                .join('');
+              tagsDropdown.classList.remove('hidden');
+            } else {
+              tagsDropdown.innerHTML = '<li>Нет доступных тэгов</li>';
+              tagsDropdown.classList.remove('hidden');
+            }
+          })
+          .catch(error => console.error('Ошибка загрузки тэгов:', error)); // Логируем ошибку
+      });
 
     // dark theme
     // Сохраняем элементы
