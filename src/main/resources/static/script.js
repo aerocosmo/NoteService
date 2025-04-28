@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Загрузка всех доступных тэгов
-    });tagsButton.addEventListener('click', function () {
+    tagsButton.addEventListener('click', function () {
       fetch('/api/notes/all-tags') // Запрос на сервер для получения списка всех тэгов
         .then(response => response.json())
         .then(tags => {
@@ -313,5 +313,5 @@ document.addEventListener('DOMContentLoaded', function() {
       bodyElement.setAttribute('data-theme', systemTheme);
     }
 
-});
+);
 
