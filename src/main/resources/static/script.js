@@ -6,7 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const noteContentInput = document.getElementById('note-content');
     const saveButton = document.getElementById('save-button');
     const cancelButton = document.getElementById('cancel-button');
-
+    const tagsButton = document.getElementById('tags-button');
+    const tagsDropdown = document.getElementById('tags-dropdown');
+    
     // Загрузка всех заметок при загрузке страницы
     fetchNotes();
 
@@ -245,9 +247,6 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(/* остальной код */);
     }
     //tag search  button
-    const tagsButton = document.getElementById('tags-button');
-    const tagsDropdown = document.getElementById('tags-dropdown');
-
     function loadTags() {
       fetch('/api/notes/tags')
         .then(response => response.json())
@@ -257,12 +256,6 @@ document.addEventListener('DOMContentLoaded', function() {
           .join('');
         });
     }
-    // function filterByTag(tag) {
-    //   fetch(`/api/notes/tags?tag=${encodeURIComponent(tag)}`)
-    //     .then(response => response.json())
-    //     .then(notes => displayNotes(notes));
-    // }
-    // tagsButton.addEventListener('click', loadTags);
 
     function filterByTag(tag) {
         fetch(`/api/notes/tags?tag=${encodeURIComponent(tag)}`)
