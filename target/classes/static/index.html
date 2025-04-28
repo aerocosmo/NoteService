@@ -9,7 +9,9 @@
 <body>
     <div class="container">
         <h1>Мои заметки</h1>
-        
+        <header class="header">
+            <button id="theme-toggle">🌓 Тёмная тема</button>
+        </header>
         <div class="note-form">
             <input type="hidden" id="note-id">
             <input type="text" id="note-title" placeholder="Заголовок" required>
@@ -19,12 +21,21 @@
                 <button id="cancel-button" class="hidden">Отмена</button>
             </div>
         </div>
-	<!-- search  -->
-	<div class="search-container">
-	    <input type="text" id="search-input" placeholder="Поиск заметок...">
-	    <button id="search-button">Поиск</button>
-	</div>
-
+        <!-- Поле для добавления тэгов -->
+        <div class="form-group">
+            <label for="note-tags">Тэги (через запятую):</label>
+            <input type="text" id="note-tags" placeholder="Пример: Работа, Личное">
+        </div>
+       
+        <!-- Поиск -->
+        <div class="search-wrapper">
+            <input type="text" id="search-input" placeholder="Поиск">
+            <button id="search-button">Поиск</button>
+            <!-- Кнопка и выпадающий список для фильтрации по тэгам -->
+            <button id="tags-button">Тэги</button>
+            <ul id="tags-dropdown" class="dropdown hidden"></ul>
+        </div>
+    
         <div class="notes-list" id="notes-list">
             <!-- Заметки будут добавлены динамически -->
         </div>
