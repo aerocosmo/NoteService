@@ -144,3 +144,8 @@ gap: 0.5rem;
 .container {
 padding: 1rem;
 }
+
+.notes-header h2 {
+font-size: 2rem;
+}
+}
