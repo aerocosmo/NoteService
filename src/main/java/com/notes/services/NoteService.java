@@ -4,6 +4,7 @@ import com.notes.model.Note;
 import com.notes.repository.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.stream.Collectors;
 
 import java.time.LocalDateTime;
 import java.util.List;

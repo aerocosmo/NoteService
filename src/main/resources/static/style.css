@@ -153,4 +153,40 @@
     --card-bg: #2d2d2d; /* Цвет карточек в тёмной теме */
     --border-color: rgba(64, 64, 64, 0.5); /* Полупрозрачная граница в тёмной теме */
   }
+
+  /* Выпадающий список тэгов */
+.tags-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+#tags-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 200px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: none;
+  z-index: 1000;
+}
+
+#tags-dropdown li {
+  padding: 10px 15px;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+#tags-dropdown li:hover {
+  background-color: var(--border-color);
+}
+
+#tags-dropdown.hidden {
+  display: none;
+}
+
   
