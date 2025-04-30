@@ -50,9 +50,10 @@ public class NoteService {
     }
 
     public List<Note> searchNotes(String query) {
-        // Логирование для отладки
-        //System.out.println("Service searching for: " + query);
-        return noteRepository.findByTitleContainingOrContentContainingIgnoreCase(query, query);
-    }
+   	 System.out.println("Searching for query: " + query);
+   	 List<Note> results = noteRepository.searchNotes(query);
+   	 System.out.println("Found notes: " + results.size());
+   	 return results;
+}
 }
 

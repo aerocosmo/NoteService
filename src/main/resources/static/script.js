@@ -280,17 +280,17 @@ document.addEventListener('DOMContentLoaded', function() {
             loadNotes();
         }
     });
-    
+
     function searchNotes(query) {
-        fetch(`/api/notes/search?query=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(data => {
-                // Проверяем структуру данных, убеждаемся что это массив
-                const notesArray = Array.isArray(data) ? data : [];
-                displayNotes(notesArray);
-            })
-            .catch(error => console.error('Error searching notes:', error));
+    fetch(`/api/notes/search?query=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+            const notesArray = Array.isArray(data) ? data : [];
+            displayNotes(notesArray);
+        })
+        .catch(error => console.error('Error searching notes:', error));
     }
+
     // show all
     document.getElementById('show-all-button').addEventListener('click', function() {
         document.getElementById('search-input').value = '';
