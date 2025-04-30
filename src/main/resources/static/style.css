@@ -153,4 +153,13 @@
     --card-bg: #2d2d2d; /* Цвет карточек в тёмной теме */
     --border-color: rgba(64, 64, 64, 0.5); /* Полупрозрачная граница в тёмной теме */
   }
+
+  .note-tags {
+    color: var(--text-color);
+    opacity: 0.8;
+    font-size: 0.9em;
+    margin-top: 10px;
+    padding: 5px 0;
+    border-top: 1px dashed var(--border-color);
+}
   
