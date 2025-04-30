@@ -10,12 +10,6 @@ import java.util.List; // Добавьте этот импорт
 @Repository
 public interface NoteRepository extends JpaRepository<Note, Long> {
     // Базовые CRUD операции уже включены в JpaRepository
-
-//    @Query("SELECT n FROM Note n WHERE " +
-//       "LOWER(n.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-//       "LOWER(n.content) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-//       "LOWER(n.tags) LIKE LOWER(CONCAT('%', :query, '%'))")
-//	List<Note> searchNotes(@Param("query") String query);
 	
       @Query("SELECT n FROM Note n WHERE " +
      	// Преобразуем и поле title, и поисковый запрос в нижний регистр перед сравнением

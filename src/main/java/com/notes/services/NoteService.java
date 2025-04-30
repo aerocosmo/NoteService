@@ -31,19 +31,6 @@ public class NoteService {
         return noteRepository.save(note);
     }
 
-   // public Optional<Note> updateNote(Long id, Note updatedNote) {
-   //     return noteRepository.findById(id)
-   //             .map(existingNote -> {
-   //                 existingNote.setTitle(updatedNote.getTitle());
-   //                 existingNote.setContent(updatedNote.getContent());
-   //                 // Обновляем tags только если они не null в обновлённой заметке
-   //                 if (updatedNote.getTags() != null) {
-   //                     existingNote.setTags(updatedNote.getTags());
-   //                 }
-   //                 existingNote.setUpdatedAt(LocalDateTime.now());
-   //                 return noteRepository.save(existingNote);
-   //             });
-   // }
     public Optional<Note> updateNote(Long id, Note updatedNote) {
     	return noteRepository.findById(id)
             .map(existingNote -> {

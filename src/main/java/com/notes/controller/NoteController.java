@@ -52,15 +52,6 @@ public class NoteController {
        return ResponseEntity.ok(notes);
    }
 
-    //@PutMapping("/{id}/with-category")
-    //public ResponseEntity<Note> updateNoteWithCategory(
-    //        @PathVariable Long id,
-    //        @RequestBody Note note,
-    //        @RequestParam(required = false) String categoryName) {
-    //    return noteService.updateNoteWithCategory(id, note, categoryName)
-    //            .map(ResponseEntity::ok)
-    //            .orElse(ResponseEntity.notFound().build());
-    //}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNote(@PathVariable Long id) {
         if (noteService.deleteNote(id)) {

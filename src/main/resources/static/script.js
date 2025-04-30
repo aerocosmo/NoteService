@@ -77,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Функция для обновления заметки
-    // Теперь только одна правильная версия, принимающая tags
     function updateNote(id, title, content, tags) {
         fetch(`/api/notes/${id}`, {
             method: 'PUT',
@@ -130,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             notesList.innerHTML = '<p class="empty-notes">Ничего не найдено.</p>';
             return;
         }
-        // Убедимся, что notes - массив перед сортировкой
+        // notes - массив перед сортировкой
         const notesArray = Array.isArray(notes) ? notes : [notes];
 
         notesArray.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
