@@ -40,6 +40,7 @@ public class NoteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Note> updateNote(@PathVariable Long id, @RequestBody Note note) {
+        System.out.println("Получены теги: " + note.getTags()); // Логирование
         return noteService.updateNote(id, note)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

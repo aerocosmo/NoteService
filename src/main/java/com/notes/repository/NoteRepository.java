@@ -11,13 +11,13 @@ import java.util.List; // Добавьте этот импорт
 public interface NoteRepository extends JpaRepository<Note, Long> {
     // Базовые CRUD операции уже включены в JpaRepository
 
-    // Метод для поиска заметок по id категории
-    List<Note> findByTitleContainingOrContentContainingIgnoreCase(String title, String content);
     @Query("SELECT n FROM Note n WHERE " +
        "LOWER(n.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
        "LOWER(n.content) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
        "LOWER(n.tags) LIKE LOWER(CONCAT('%', :query, '%'))")
-    List<Note> searchNotes(@Param("query") String query);
+	List<Note> searchNotes(@Param("query") String query);
+    // Метод для поиска заметок по id категории
+    List<Note> findByTitleContainingOrContentContainingIgnoreCase(String title, String content);
 }
 
 

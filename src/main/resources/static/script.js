@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Функция для обновления заметки (ОБНОВЛЕНО ДЛЯ ТЕГОВ)
     function updateNote(id, title, content, tags) { // Добавлен параметр tags
+	System.out.println("Получены теги: " + updatedNote.getTags()); // Логируем
         fetch(`/api/notes/${id}`, {
             method: 'PUT',
             headers: {
@@ -79,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
             body: JSON.stringify({ 
                 title, 
                 content,
-                tags // Добавлено поле tags
+                tags // Передаем теги
             })
         })
         .then(response => {
@@ -203,7 +204,6 @@ document.addEventListener('DOMContentLoaded', function() {
             behavior: 'smooth'
         });
     }
-
     // Функция сброса формы
     function resetForm() {
         noteIdInput.value = '';

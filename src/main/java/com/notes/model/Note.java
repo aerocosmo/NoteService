@@ -17,10 +17,11 @@ public class Note {
     private Long id;
 
     private String title;
-    private String tags;
     
     @Column(length = 10000)
     private String content;
+
+    private String tags;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

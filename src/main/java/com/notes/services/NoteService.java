@@ -32,13 +32,15 @@ public class NoteService {
     }
 
     public Optional<Note> updateNote(Long id, Note updatedNote) {
-        return noteRepository.findById(id)
-                .map(existingNote -> {
-                    existingNote.setTitle(updatedNote.getTitle());
-                    existingNote.setContent(updatedNote.getContent());
-                    existingNote.setUpdatedAt(LocalDateTime.now());
-                    return noteRepository.save(existingNote);
-                });
+    return noteRepository.findById(id)
+            .map(existingNote -> {
+                existingNote.setTitle(updatedNote.getTitle());
+                existingNote.setContent(updatedNote.getContent());
+                // Всегда обновляем теги, если они переданы (даже пустая строка)
+                existingNote.setTags(updatedNote.getTags() != null ? updatedNote.getTags() : existingNote.getTags());
+                existingNote.setUpdatedAt(LocalDateTime.now());
+                return noteRepository.save(existingNote);
+            });
     }
 
     public boolean deleteNote(Long id) {
