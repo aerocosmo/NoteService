@@ -1,19 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Элементы DOM
+    // Элементы DOM (ДОБАВЛЕН ЭЛЕМЕНТ ДЛЯ ТЕГОВ)
     const notesList = document.getElementById('notes-list');
     const noteIdInput = document.getElementById('note-id');
     const noteTitleInput = document.getElementById('note-title');
     const noteContentInput = document.getElementById('note-content');
+    const noteTagsInput = document.getElementById('note-tags'); // НОВЫЙ ЭЛЕМЕНТ
     const saveButton = document.getElementById('save-button');
     const cancelButton = document.getElementById('cancel-button');
 
     // Загрузка всех заметок при загрузке страницы
     fetchNotes();
 
-    // Сохранение заметки
+    // Сохранение заметки (ОБНОВЛЕНО ДЛЯ ТЕГОВ)
     saveButton.addEventListener('click', function() {
         const title = noteTitleInput.value.trim();
         const content = noteContentInput.value.trim();
+        const tags = noteTagsInput.value.trim(); // ПОЛУЧАЕМ ТЕГИ
         const id = noteIdInput.value;
 
         if (!title || !content) {
@@ -22,9 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (id) {
-            updateNote(id, title, content);
+            updateNote(id, title, content, tags); // ПЕРЕДАЕМ ТЕГИ
         } else {
-            createNote(title, content);
+            createNote(title, content, tags); // ПЕРЕДАЕМ ТЕГИ
         }
     });
 
@@ -41,14 +43,18 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error fetching notes:', error));
     }
 
-    // Функция для создания новой заметки
-    function createNote(title, content) {
+    // Функция для создания новой заметки (ОБНОВЛЕНО ДЛЯ ТЕГОВ)
+    function createNote(title, content, tags) {
         fetch('/api/notes', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ title, content })
+            body: JSON.stringify({ 
+                title, 
+                content,
+                tags // ДОБАВЛЯЕМ ТЕГИ В ТЕЛО ЗАПРОСА
+            })
         })
         .then(response => {
             if (response.ok) {
@@ -61,6 +67,32 @@ document.addEventListener('DOMContentLoaded', function() {
             fetchNotes();
         })
         .catch(error => console.error('Error creating note:', error));
+    }
+
+    // Функция для обновления заметки (ОБНОВЛЕНО ДЛЯ ТЕГОВ)
+    function updateNote(id, title, content, tags) {
+        fetch(`/api/notes/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                title, 
+                content,
+                tags // ДОБАВЛЯЕМ ТЕГИ В ТЕЛО ЗАПРОСА
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Не удалось обновить заметку');
+        })
+        .then(() => {
+            resetForm();
+            fetchNotes();
+        })
+        .catch(error => console.error('Error updating note:', error));
     }
 
     // Функция для обновления заметки
@@ -114,9 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Проверяем, что notes - это массив, который можно сортировать
         if (Array.isArray(notes)) {
-            // Сортировка заметок по дате изменения (сначала новые)
             notes.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
         }
         
@@ -124,15 +154,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const noteCard = document.createElement('div');
             noteCard.className = 'note-card';
             
-            // Генерация HTML для отображения категории, если она есть
             const categoryHtml = note.category 
                 ? `<span class="note-category">${note.category.name}</span>` 
+                : '';
+            
+            // ДОБАВЛЯЕМ БЛОК С ТЕГАМИ
+            const tagsHtml = note.tags 
+                ? `<div class="note-tags">Теги: ${note.tags}</div>` 
                 : '';
                 
             noteCard.innerHTML = `
                 <h2>${note.title}</h2>
                 <p>${note.content}</p>
                 ${categoryHtml}
+                ${tagsHtml} <!-- ВЫВОДИМ ТЕГИ -->
                 <div class="note-actions">
                     <button class="edit-btn" data-id="${note.id}">✏️</button>
                     <button class="delete-btn" data-id="${note.id}">🗑️</button>
@@ -154,15 +189,15 @@ document.addEventListener('DOMContentLoaded', function() {
             notesList.appendChild(noteCard);
         });
     }
-    // Функция для заполнения формы данными заметки для редактирования
+    // Функция для заполнения формы (ОБНОВЛЕНО ДЛЯ ТЕГОВ)
     function editNote(note) {
         noteIdInput.value = note.id;
         noteTitleInput.value = note.title;
         noteContentInput.value = note.content;
+        noteTagsInput.value = note.tags || ''; // ЗАПОЛНЯЕМ ТЕГИ
         saveButton.textContent = 'Обновить';
         cancelButton.classList.remove('hidden');
         
-        // Прокрутка к форме
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
@@ -174,6 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
         noteIdInput.value = '';
         noteTitleInput.value = '';
         noteContentInput.value = '';
+        noteTagsInput.value = ''; // СБРАСЫВАЕМ ТЕГИ
         saveButton.textContent = 'Сохранить';
         cancelButton.classList.add('hidden');
     }
@@ -254,6 +290,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 displayNotes(notesArray);
             })
             .catch(error => console.error('Error searching notes:', error));
+    }
+    // show all
+    document.getElementById('show-all-button').addEventListener('click', function() {
+        document.getElementById('search-input').value = '';
+        fetchNotes();
+    });
+    // dark theme
+    // Сохраняем элементы
+    const themeToggle = document.getElementById('theme-toggle');
+    const bodyElement = document.body;
+    
+    // Проверка сохранённой темы
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    bodyElement.setAttribute('data-theme', savedTheme);
+    
+    // Обработчик клика
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = bodyElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+      bodyElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    
+      // Обновляем текст кнопки
+      themeToggle.textContent = newTheme === 'dark' ? '☀️ Светлая тема' : '🌓 Тёмная тема';
+    });
+    
+    // Автоопределение системной темы
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    if (!localStorage.getItem('theme')) {
+      bodyElement.setAttribute('data-theme', systemTheme);
     }
 
 });
