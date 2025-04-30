@@ -1,31 +1,38 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Элементы DOM (ДОБАВЛЕН ЭЛЕМЕНТ ДЛЯ ТЕГОВ)
+    // Элементы DOM
     const notesList = document.getElementById('notes-list');
     const noteIdInput = document.getElementById('note-id');
     const noteTitleInput = document.getElementById('note-title');
     const noteContentInput = document.getElementById('note-content');
-    const noteTagsInput = document.getElementById('note-tags'); // НОВЫЙ ЭЛЕМЕНТ
+    const noteTagsInput = document.getElementById('note-tags'); // Элемент для тегов
     const saveButton = document.getElementById('save-button');
     const cancelButton = document.getElementById('cancel-button');
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const showAllButton = document.getElementById('show-all-button');
+    const themeToggle = document.getElementById('theme-toggle');
+    const bodyElement = document.body;
 
     // Загрузка всех заметок при загрузке страницы
     fetchNotes();
 
-    // Сохранение заметки (ОБНОВЛЕНО ДЛЯ ТЕГОВ)
+    // Сохранение заметки (создание или обновление)
     saveButton.addEventListener('click', function() {
         const title = noteTitleInput.value.trim();
         const content = noteContentInput.value.trim();
         const tags = noteTagsInput.value.trim(); // Получаем теги
         const id = noteIdInput.value;
-    
+
         if (!title || !content) {
-            alert('Пожалуйста, заполните все поля');
+            alert('Пожалуйста, заполните заголовок и содержание');
             return;
         }
-    
+
         if (id) {
-            updateNote(id, title, content, tags); // Передаем теги
+            // Вызываем функцию обновления с передачей тегов
+            updateNote(id, title, content, tags);
         } else {
+            // Вызываем функцию создания с передачей тегов
             createNote(title, content, tags);
         }
     });
@@ -43,17 +50,17 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error fetching notes:', error));
     }
 
-    // Функция для создания новой заметки (ОБНОВЛЕНО ДЛЯ ТЕГОВ)
+    // Функция для создания новой заметки
     function createNote(title, content, tags) {
         fetch('/api/notes', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
-                title, 
+            body: JSON.stringify({
+                title,
                 content,
-                tags // ДОБАВЛЯЕМ ТЕГИ В ТЕЛО ЗАПРОСА
+                tags // Включаем теги в тело запроса
             })
         })
         .then(response => {
@@ -69,41 +76,19 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Error creating note:', error));
     }
 
-    // Функция для обновления заметки (ОБНОВЛЕНО ДЛЯ ТЕГОВ)
-    function updateNote(id, title, content, tags) { // Добавлен параметр tags
-	System.out.println("Получены теги: " + updatedNote.getTags()); // Логируем
-        fetch(`/api/notes/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                title, 
-                content,
-                tags // Передаем теги
-            })
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Не удалось обновить заметку');
-        })
-        .then(() => {
-            resetForm();
-            fetchNotes();
-        })
-        .catch(error => console.error('Error updating note:', error));
-    }
-
     // Функция для обновления заметки
-    function updateNote(id, title, content) {
+    // Теперь только одна правильная версия, принимающая tags
+    function updateNote(id, title, content, tags) {
         fetch(`/api/notes/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ title, content })
+            body: JSON.stringify({
+                title,
+                content,
+                tags // Включаем теги в тело запроса
+            })
         })
         .then(response => {
             if (response.ok) {
@@ -127,8 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => {
                 if (response.ok) {
                     fetchNotes();
-                    if (noteIdInput.value === id) {
-                        resetForm();
+                    if (noteIdInput.value === id.toString()) { // Сравниваем строки
+                         resetForm();
                     }
                     return;
                 }
@@ -141,69 +126,59 @@ document.addEventListener('DOMContentLoaded', function() {
     // Функция для отображения заметок на странице
     function displayNotes(notes) {
         notesList.innerHTML = '';
-        
         if (!notes || notes.length === 0) {
             notesList.innerHTML = '<p class="empty-notes">Ничего не найдено.</p>';
             return;
         }
-        
-        if (Array.isArray(notes)) {
-            notes.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-        }
-        
-        notes.forEach(note => {
+        // Убедимся, что notes - массив перед сортировкой
+        const notesArray = Array.isArray(notes) ? notes : [notes];
+
+        notesArray.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+        notesArray.forEach(note => {
             const noteCard = document.createElement('div');
-            noteCard.className = 'note-card';
-            
-            const categoryHtml = note.category 
-                ? `<span class="note-category">${note.category.name}</span>` 
-                : '';
-            
+            noteCard.className = 'notecard';
+
+            const categoryHtml = note.category ? `<span class="notecategory">${note.category.name}</span>` : '';
             // ДОБАВЛЯЕМ БЛОК С ТЕГАМИ
-            const tagsHtml = note.tags 
-                ? `<div class="note-tags">Теги: ${note.tags}</div>` 
-                : '';
-                
+            const tagsHtml = note.tags ? `<div class="note-tags">Теги: ${note.tags}</div>` : '';
+
             noteCard.innerHTML = `
                 <h2>${note.title}</h2>
                 <p>${note.content}</p>
                 ${categoryHtml}
-                ${tagsHtml} <!-- ВЫВОДИМ ТЕГИ -->
+                ${tagsHtml} <!--ВЫВОДИМ ТЕГИ-->
                 <div class="note-actions">
                     <button class="edit-btn" data-id="${note.id}">✏️</button>
                     <button class="delete-btn" data-id="${note.id}">🗑️</button>
                 </div>
-                <div class="note-date">
-                    Изменено: ${formatDate(note.updatedAt)}
-                </div>
+                <div class="note-date">Изменено: ${formatDate(note.updatedAt)}</div>
             `;
-            
+
             // Добавление обработчиков событий для кнопок
+            // Используем делегирование событий или находим кнопки внутри созданной карточки
             noteCard.querySelector('.edit-btn').addEventListener('click', function() {
                 editNote(note);
             });
-            
             noteCard.querySelector('.delete-btn').addEventListener('click', function() {
                 deleteNote(note.id);
             });
-            
+
             notesList.appendChild(noteCard);
         });
     }
-    // Функция для заполнения формы (ОБНОВЛЕНО ДЛЯ ТЕГОВ)
+
+    // Функция для заполнения формы при редактировании
     function editNote(note) {
         noteIdInput.value = note.id;
         noteTitleInput.value = note.title;
         noteContentInput.value = note.content;
-        noteTagsInput.value = note.tags || ''; // Заполняем теги
+        noteTagsInput.value = note.tags || ''; // Заполняем теги, используем пустую строку если null
         saveButton.textContent = 'Обновить';
         cancelButton.classList.remove('hidden');
-        
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
     // Функция сброса формы
     function resetForm() {
         noteIdInput.value = '';
@@ -217,111 +192,70 @@ document.addEventListener('DOMContentLoaded', function() {
     // Функция форматирования даты
     function formatDate(dateString) {
         const date = new Date(dateString);
-        return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        // Используем опции для более гибкого форматирования
+        const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return date.toLocaleDateString(undefined, options);
     }
-	// sgination
-    let currentPage = 0;
-    const pageSize = 10;
-    
-    function loadNotes(page = 0) {
-        fetch(`/api/notes?page=${page}&size=${pageSize}`)
-            .then(response => response.json())
-            .then(data => {
-                displayNotes(data.content);
-                updatePagination(data);
-            })
-            .catch(error => console.error('Error fetching notes:', error));
-    }
-    
-    function updatePagination(data) {
-        const paginationElement = document.getElementById('pagination');
-        paginationElement.innerHTML = '';
-        
-        if (data.totalPages > 1) {
-            // Previous page button
-            const prevButton = document.createElement('button');
-            prevButton.textContent = 'Назад';
-            prevButton.disabled = currentPage === 0;
-            prevButton.addEventListener('click', () => {
-                currentPage--;
-                loadNotes(currentPage);
-            });
-            paginationElement.appendChild(prevButton);
-            
-            // Page numbers
-            for (let i = 0; i < data.totalPages; i++) {
-                const pageButton = document.createElement('button');
-                pageButton.textContent = i + 1;
-                pageButton.classList.toggle('active', i === currentPage);
-                pageButton.addEventListener('click', () => {
-                    currentPage = i;
-                    loadNotes(currentPage);
-                });
-                paginationElement.appendChild(pageButton);
-            }
-            
-            // Next page button
-            const nextButton = document.createElement('button');
-            nextButton.textContent = 'Вперед';
-            nextButton.disabled = currentPage === data.totalPages - 1;
-            nextButton.addEventListener('click', () => {
-                currentPage++;
-                loadNotes(currentPage);
-            });
-            paginationElement.appendChild(nextButton);
-        }
-    }
-    // search logic
-    document.getElementById('search-button').addEventListener('click', function() {
-        const query = document.getElementById('search-input').value.trim();
+
+    // Search logic
+    searchButton.addEventListener('click', function() {
+        const query = searchInput.value.trim();
         if (query) {
             searchNotes(query);
         } else {
-            loadNotes();
+            fetchNotes(); // Если строка поиска пуста, показать все заметки
         }
     });
 
+    showAllButton.addEventListener('click', function() {
+        searchInput.value = ''; // Очистить поле поиска
+        fetchNotes(); // Загрузить все заметки
+    });
+
     function searchNotes(query) {
-    fetch(`/api/notes/search?query=${encodeURIComponent(query)}`)
-        .then(response => response.json())
-        .then(data => {
-            const notesArray = Array.isArray(data) ? data : [];
-            displayNotes(notesArray);
-        })
-        .catch(error => console.error('Error searching notes:', error));
+        fetch(`/api/notes/search?query=${encodeURIComponent(query)}`)
+            .then(response => {
+                if (!response.ok) {
+                     // Обработка случая, если поиск не реализован или ошибка на сервере
+                     console.error('Search failed or not implemented');
+                     // Возможно, вывести сообщение пользователю
+                     notesList.innerHTML = '<p class="empty-notes">Ошибка поиска или функция не поддерживается.</p>';
+                     return null; // Возвращаем null, чтобы прервать цепочку then
+                }
+                return response.json();
+            })
+            .then(data => {
+                 if (data !== null) { // Проверяем, что данные получены
+                    const notesArray = Array.isArray(data) ? data : [];
+                    displayNotes(notesArray);
+                 }
+            })
+            .catch(error => console.error('Error searching notes:', error));
     }
 
-    // show all
-    document.getElementById('show-all-button').addEventListener('click', function() {
-        document.getElementById('search-input').value = '';
-        fetchNotes();
-    });
-    // dark theme
-    // Сохраняем элементы
-    const themeToggle = document.getElementById('theme-toggle');
-    const bodyElement = document.body;
-    
+    // Dark theme toggle
     // Проверка сохранённой темы
     const savedTheme = localStorage.getItem('theme') || 'light';
     bodyElement.setAttribute('data-theme', savedTheme);
-    
+
+    // Обновляем текст кнопки при загрузке
+    themeToggle.textContent = savedTheme === 'dark' ? '☀️ Светлая тема' : '🌓 Тёмная тема';
+
     // Обработчик клика
     themeToggle.addEventListener('click', () => {
-      const currentTheme = bodyElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    
-      bodyElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-    
-      // Обновляем текст кнопки
-      themeToggle.textContent = newTheme === 'dark' ? '☀️ Светлая тема' : '🌓 Тёмная тема';
+        const currentTheme = bodyElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        bodyElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        // Обновляем текст кнопки
+        themeToggle.textContent = newTheme === 'dark' ? '☀️ Светлая тема' : '🌓 Тёмная тема';
     });
-    
-    // Автоопределение системной темы
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    if (!localStorage.getItem('theme')) {
-      bodyElement.setAttribute('data-theme', systemTheme);
-    }
 
+    // Автоопределение системной темы (применяется только если нет сохранённой темы)
+    if (!localStorage.getItem('theme')) {
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        bodyElement.setAttribute('data-theme', systemTheme);
+         themeToggle.textContent = systemTheme === 'dark' ? '☀️ Светлая тема' : '🌓 Тёмная тема';
+    }
 });
 

@@ -31,18 +31,36 @@ public class NoteService {
         return noteRepository.save(note);
     }
 
+   // public Optional<Note> updateNote(Long id, Note updatedNote) {
+   //     return noteRepository.findById(id)
+   //             .map(existingNote -> {
+   //                 existingNote.setTitle(updatedNote.getTitle());
+   //                 existingNote.setContent(updatedNote.getContent());
+   //                 // Обновляем tags только если они не null в обновлённой заметке
+   //                 if (updatedNote.getTags() != null) {
+   //                     existingNote.setTags(updatedNote.getTags());
+   //                 }
+   //                 existingNote.setUpdatedAt(LocalDateTime.now());
+   //                 return noteRepository.save(existingNote);
+   //             });
+   // }
     public Optional<Note> updateNote(Long id, Note updatedNote) {
-    return noteRepository.findById(id)
+    	return noteRepository.findById(id)
             .map(existingNote -> {
-                existingNote.setTitle(updatedNote.getTitle());
-                existingNote.setContent(updatedNote.getContent());
-                // Всегда обновляем теги, если они переданы (даже пустая строка)
-                existingNote.setTags(updatedNote.getTags() != null ? updatedNote.getTags() : existingNote.getTags());
+                // Обновляем только не-null поля
+                if (updatedNote.getTitle() != null) {
+                    existingNote.setTitle(updatedNote.getTitle());
+                }
+                if (updatedNote.getContent() != null) {
+                    existingNote.setContent(updatedNote.getContent());
+                }
+                if (updatedNote.getTags() != null) {
+                    existingNote.setTags(updatedNote.getTags());
+                }
                 existingNote.setUpdatedAt(LocalDateTime.now());
                 return noteRepository.save(existingNote);
             });
     }
-
     public boolean deleteNote(Long id) {
         if (noteRepository.existsById(id)) {
             noteRepository.deleteById(id);
@@ -50,7 +68,6 @@ public class NoteService {
         }
         return false;
     }
-
     public List<Note> searchNotes(String query) {
    	 System.out.println("Searching for query: " + query);
    	 List<Note> results = noteRepository.searchNotes(query);
