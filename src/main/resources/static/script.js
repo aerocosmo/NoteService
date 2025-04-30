@@ -15,18 +15,18 @@ document.addEventListener('DOMContentLoaded', function() {
     saveButton.addEventListener('click', function() {
         const title = noteTitleInput.value.trim();
         const content = noteContentInput.value.trim();
-        const tags = noteTagsInput.value.trim(); // ПОЛУЧАЕМ ТЕГИ
+        const tags = noteTagsInput.value.trim(); // Получаем теги
         const id = noteIdInput.value;
-
+    
         if (!title || !content) {
             alert('Пожалуйста, заполните все поля');
             return;
         }
-
+    
         if (id) {
-            updateNote(id, title, content, tags); // ПЕРЕДАЕМ ТЕГИ
+            updateNote(id, title, content, tags); // Передаем теги
         } else {
-            createNote(title, content, tags); // ПЕРЕДАЕМ ТЕГИ
+            createNote(title, content, tags);
         }
     });
 
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Функция для обновления заметки (ОБНОВЛЕНО ДЛЯ ТЕГОВ)
-    function updateNote(id, title, content, tags) {
+    function updateNote(id, title, content, tags) { // Добавлен параметр tags
         fetch(`/api/notes/${id}`, {
             method: 'PUT',
             headers: {
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
             body: JSON.stringify({ 
                 title, 
                 content,
-                tags // ДОБАВЛЯЕМ ТЕГИ В ТЕЛО ЗАПРОСА
+                tags // Добавлено поле tags
             })
         })
         .then(response => {
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
         noteIdInput.value = note.id;
         noteTitleInput.value = note.title;
         noteContentInput.value = note.content;
-        noteTagsInput.value = note.tags || ''; // ЗАПОЛНЯЕМ ТЕГИ
+        noteTagsInput.value = note.tags || ''; // Заполняем теги
         saveButton.textContent = 'Обновить';
         cancelButton.classList.remove('hidden');
         
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
         noteIdInput.value = '';
         noteTitleInput.value = '';
         noteContentInput.value = '';
-        noteTagsInput.value = ''; // СБРАСЫВАЕМ ТЕГИ
+        noteTagsInput.value = ''; // Сбрасываем теги
         saveButton.textContent = 'Сохранить';
         cancelButton.classList.add('hidden');
     }
